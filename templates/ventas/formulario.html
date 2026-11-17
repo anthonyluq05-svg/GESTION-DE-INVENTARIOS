@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Nueva venta</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <h5>Cliente</h5>
+    {{ form.as_p }}
+
+    <h5 class="mt-4">Productos de la venta</h5>
+
+    {{ formset.management_form }}
+    {{ formset.non_form_errors }}
+
+    {% for detalle in formset %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>Producto {{ forloop.counter }}</h6>
+
+            {% for hidden in detalle.hidden_fields %}
+            {{ hidden }}
+            {% endfor %}
+
+            {{ detalle.non_field_errors }}
+
+            {% for campo in detalle.visible_fields %}
+            <div class="mb-2">
+                <label class="form-label">
+                    {{ campo.label }}
+                </label>
+                {{ campo }}
+                {{ campo.errors }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">
+        Guardar venta
+    </button>
+
+    <a href="{% url 'ventas:lista' %}" class="btn btn-secondary">
+        Cancelar
+    </a>
+</form>
+
+{% endblock %}
