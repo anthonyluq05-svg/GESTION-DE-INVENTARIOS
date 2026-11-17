@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Nueva compra</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="mb-4">
+        <h5>Proveedor</h5>
+        {{ form.as_p }}
+    </div>
+
+    <h5>Productos de la compra</h5>
+
+    {{ formset.management_form }}
+    {{ formset.non_form_errors }}
+
+    {% for detalle in formset %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>Producto {{ forloop.counter }}</h6>
+
+            {% for hidden in detalle.hidden_fields %}
+            {{ hidden }}
+            {% endfor %}
+
+            {{ detalle.non_field_errors }}
+
+            {% for campo in detalle.visible_fields %}
+            <div class="mb-2">
+                <label class="form-label">
+                    {{ campo.label }}
+                </label>
+                {{ campo }}
+                {{ campo.errors }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">
+        Guardar compra
+    </button>
+
+    <a href="{% url 'compras:lista' %}" class="btn btn-secondary">
+        Cancelar
+    </a>
+</form>
+
+{% endblock %}

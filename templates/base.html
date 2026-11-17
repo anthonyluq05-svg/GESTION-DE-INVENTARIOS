@@ -13,9 +13,24 @@
 
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
+
             <a class="navbar-brand" href="{% url 'productos:lista' %}">
                 SGI Comercial
             </a>
+
+            <!-- Menú de navegación -->
+            <div class="d-flex gap-2">
+
+                <a href="{% url 'productos:lista' %}" class="btn btn-outline-light">
+                    Productos
+                </a>
+
+                <a href="{% url 'compras:lista' %}" class="btn btn-outline-light">
+                    Compras
+                </a>
+
+            </div>
+
         </div>
     </nav>
 
