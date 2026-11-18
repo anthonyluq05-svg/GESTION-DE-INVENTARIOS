@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard Comercial</h2>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6>Productos activos</h6>
+                <h2>{{ total_productos }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6>Unidades disponibles</h6>
+                <h2>{{ total_unidades }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-danger shadow-sm">
+            <div class="card-body">
+                <h6>Productos con stock bajo</h6>
+                <h2 class="text-danger">{{ stock_bajo }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6>Ventas de hoy</h6>
+                <h2 class="text-success">
+                    S/ {{ ventas_hoy|floatformat:2 }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6>Compras de hoy</h6>
+                <h2 class="text-primary">
+                    S/ {{ compras_hoy|floatformat:2 }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<h4>Últimas ventas confirmadas</h4>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Usuario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for venta in ultimas_ventas %}
+        <tr>
+            <td>{{ venta.id }}</td>
+            <td>{{ venta.cliente.nombre|default:"Público general" }}</td>
+            <td>{{ venta.fecha|date:"d/m/Y H:i" }}</td>
+            <td>{{ venta.usuario.username }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No hay ventas confirmadas.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Control de inventario</h2>
+
+<div class="alert alert-info">
+    Productos con stock bajo: {{ productos_bajos }}
+</div>
+
+<a href="{% url 'inventario:movimientos' %}" class="btn btn-primary mb-3">
+    Ver movimientos / Kardex
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Stock actual</th>
+            <th>Stock mínimo</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for existencia in existencias %}
+        <tr>
+            <td>{{ existencia.producto.codigo }}</td>
+            <td>{{ existencia.producto.nombre }}</td>
+            <td>{{ existencia.producto.categoria.nombre }}</td>
+            <td>{{ existencia.cantidad }}</td>
+            <td>{{ existencia.producto.stock_minimo }}</td>
+            <td>
+                {% if existencia.cantidad <= existencia.producto.stock_minimo %} <span class="badge bg-danger">
+                    Stock bajo
+                    </span>
+                    {% else %}
+                    <span class="badge bg-success">
+                        Disponible
+                    </span>
+                    {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">
+                No hay existencias registradas.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

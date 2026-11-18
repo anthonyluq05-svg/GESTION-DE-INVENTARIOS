@@ -14,7 +14,7 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
 
-            <a class="navbar-brand" href="{% url 'productos:lista' %}">
+            <a class="navbar-brand" href="{% url 'inicio:dashboard' %}">
                 SGI Comercial
             </a>
 
@@ -29,6 +29,12 @@
                 </a>
                 <a href="{% url 'ventas:lista' %}" class="btn btn-outline-light">
                     Ventas
+                </a>
+                <a href="{% url 'inventario:lista' %}" class="btn btn-outline-light">
+                    Inventario
+                </a>
+                <a href="{% url 'inicio:dashboard' %}" class="btn btn-outline-light">
+                    Dashboard
                 </a>
 
             </div>
