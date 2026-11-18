@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Reporte de inventario</h2>
+
+<div class="d-flex gap-2 mb-3">
+    <a href="{% url 'reportes:ventas' %}" class="btn btn-outline-primary">
+        Ventas
+    </a>
+    <a href="{% url 'reportes:compras' %}" class="btn btn-outline-primary">
+        Compras
+    </a>
+    <a href="{% url 'reportes:exportar_inventario' %}" class="btn btn-success">
+        Descargar Excel
+    </a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Stock actual</th>
+            <th>Stock mínimo</th>
+            <th>Precio venta</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for existencia in existencias %}
+        <tr>
+            <td>{{ existencia.producto.codigo }}</td>
+            <td>{{ existencia.producto.nombre }}</td>
+            <td>{{ existencia.producto.categoria.nombre }}</td>
+            <td>{{ existencia.cantidad }}</td>
+            <td>{{ existencia.producto.stock_minimo }}</td>
+            <td>S/ {{ existencia.producto.precio_venta }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay existencias registradas.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Reporte de compras</h2>
+
+<div class="mb-3">
+    <a href="{% url 'reportes:ventas' %}" class="btn btn-outline-primary">
+        Ventas
+    </a>
+    <a href="{% url 'reportes:inventario' %}" class="btn btn-outline-primary">
+        Inventario
+    </a>
+</div>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label class="form-label">Fecha inicio</label>
+        <input type="date" name="inicio" value="{{ request.GET.inicio }}" class="form-control">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Fecha fin</label>
+        <input type="date" name="fin" value="{{ request.GET.fin }}" class="form-control">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end gap-2">
+        <button class="btn btn-primary">Filtrar</button>
+        <a href="{% url 'reportes:compras' %}" class="btn btn-secondary">Limpiar</a>
+    </div>
+</form>
+<a href="{% url 'reportes:exportar_compras' %}?{{ request.GET.urlencode }}" class="btn btn-success mb-3">
+    Descargar Excel
+</a>
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="alert alert-info">
+    Total de compras: S/ {{ total|floatformat:2 }}
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Compra</th>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Costo unitario</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in detalles %}
+        <tr>
+            <td>{{ detalle.compra_id }}</td>
+            <td>{{ detalle.compra.fecha|date:"d/m/Y" }}</td>
+            <td>{{ detalle.compra.proveedor.nombre }}</td>
+            <td>{{ detalle.producto.nombre }}</td>
+            <td>{{ detalle.cantidad }}</td>
+            <td>S/ {{ detalle.costo_unitario }}</td>
+            <td>S/ {{ detalle.subtotal }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No hay compras para mostrar.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

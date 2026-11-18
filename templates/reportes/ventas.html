@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Reporte de ventas</h2>
+
+<!-- Filtros -->
+<form method="get" class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <label class="form-label">Fecha inicio</label>
+        <input type="date" name="inicio" value="{{ request.GET.inicio }}" class="form-control">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Fecha fin</label>
+        <input type="date" name="fin" value="{{ request.GET.fin }}" class="form-control">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">
+            Filtrar
+        </button>
+
+        <a href="{% url 'reportes:ventas' %}" class="btn btn-secondary">
+            Limpiar
+        </a>
+    </div>
+
+</form>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<!-- Total -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h6>Total de ventas confirmadas</h6>
+        <h3 class="text-success">
+            S/ {{ total|floatformat:2 }}
+        </h3>
+    </div>
+</div>
+
+<!-- Exportación -->
+<a href="{% url 'reportes:exportar_ventas' %}?{{ request.GET.urlencode }}" class="btn btn-success mb-3">
+    Descargar Excel
+</a>
+
+<!-- Tabla -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Venta</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.venta_id }}</td>
+                <td>{{ detalle.venta.fecha|date:"d/m/Y" }}</td>
+                <td>
+                    {{ detalle.venta.cliente.nombre|default:"Público general" }}
+                </td>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>S/ {{ detalle.precio_unitario|floatformat:2 }}</td>
+                <td>S/ {{ detalle.subtotal|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">
+                    No hay ventas confirmadas para este período.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
