@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from productos.models import Producto
+from django.core.exceptions import ValidationError
 
 
 class Cliente(models.Model):
@@ -51,3 +52,22 @@ class DetalleVenta(models.Model):
 
     def __str__(self):
         return f"{self.producto} - {self.cantidad}"
+
+    def save(self, *args, **kwargs):
+        if self.venta_id:
+            estado = Venta.objects.values_list("estado", flat=True).get(
+                pk=self.venta_id
+            )
+
+            if estado != "BORRADOR":
+                raise ValidationError("No se puede modificar una venta procesada.")
+
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.venta.estado != "BORRADOR":
+            raise ValidationError(
+                "No se puede eliminar un detalle de una venta procesada."
+            )
+
+        return super().delete(*args, **kwargs)

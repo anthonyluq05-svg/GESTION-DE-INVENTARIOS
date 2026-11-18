@@ -12,20 +12,29 @@ class DetalleCompraInline(admin.TabularInline):
     model = DetalleCompra
     extra = 1
 
+    def has_add_permission(self, request, obj):
+        return obj is None or obj.estado == "BORRADOR"
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.estado != "BORRADOR":
+            return False
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(Compra)
 class CompraAdmin(admin.ModelAdmin):
     list_display = ("id", "proveedor", "fecha", "estado", "usuario")
     list_filter = ("estado", "fecha")
     inlines = [DetalleCompraInline]
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj and obj.estado != "BORRADOR":
-            return ("proveedor", "usuario", "estado")
-        return ("estado",)
+    readonly_fields = ("estado",)
 
     def has_change_permission(self, request, obj=None):
         if obj and obj.estado != "BORRADOR":
             return False
-
         return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
