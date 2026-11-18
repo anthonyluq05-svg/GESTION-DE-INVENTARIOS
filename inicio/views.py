@@ -7,9 +7,11 @@ from productos.models import Producto
 from compras.models import Compra, DetalleCompra
 from ventas.models import Venta, DetalleVenta
 from inventario.models import Existencia
+from django.contrib.auth.decorators import permission_required
 
 
 @login_required
+@permission_required("productos.view_producto", raise_exception=True)
 def dashboard(request):
     hoy = timezone.localdate()
 

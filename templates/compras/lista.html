@@ -4,9 +4,11 @@
 
 <h2>Registro de compras</h2>
 
+{% if perms.compras.add_compra %}
 <a href="{% url 'compras:crear' %}" class="btn btn-primary mb-3">
     Nueva compra
 </a>
+{% endif %}
 
 {% if messages %}
 {% for message in messages %}
@@ -37,7 +39,7 @@
             <td>{{ compra.usuario.username }}</td>
             <td>{{ compra.get_estado_display }}</td>
             <td>
-                {% if compra.estado == 'BORRADOR' %}
+                {% if compra.estado == 'BORRADOR' and perms.compras.change_compra %}
                 <form method="post" action="{% url 'compras:confirmar' compra.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-success btn-sm"

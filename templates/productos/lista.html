@@ -4,10 +4,11 @@
 
 <h2>Lista de productos</h2>
 
+{% if perms.productos.add_producto %}
 <a href="{% url 'productos:crear' %}" class="btn btn-primary mb-3">
     Nuevo producto
 </a>
-
+{% endif %}
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -27,9 +28,11 @@
             <td>{{ producto.categoria.nombre }}</td>
             <td>S/ {{ producto.precio_venta }}</td>
             <td>
+                {% if perms.productos.change_producto %}
                 <a href="{% url 'productos:editar' producto.pk %}" class="btn btn-warning btn-sm">
                     Editar
                 </a>
+                {% endif %}
             </td>
         </tr>
         {% empty %}

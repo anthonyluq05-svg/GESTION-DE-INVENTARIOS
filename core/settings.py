@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "compras",
     "inventario",
     "ventas",
+    "usuarios",
+    "reportes",
 ]
 
 MIDDLEWARE = [
@@ -110,7 +112,11 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "America/Lima"
 
+LOGIN_URL = "/accounts/login/"
+
 LOGIN_REDIRECT_URL = "/"
+
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 USE_I18N = True
 

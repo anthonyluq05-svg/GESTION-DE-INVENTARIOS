@@ -4,9 +4,11 @@
 
 <h2>Registro de ventas</h2>
 
+{% if perms.ventas.add_venta %}
 <a href="{% url 'ventas:crear' %}" class="btn btn-primary mb-3">
     Nueva venta
 </a>
+{% endif %}
 
 {% if messages %}
 {% for message in messages %}
@@ -34,7 +36,7 @@
             <td>{{ venta.usuario.username }}</td>
             <td>{{ venta.get_estado_display }}</td>
             <td>
-                {% if venta.estado == 'BORRADOR' %}
+                {% if venta.estado == 'BORRADOR' and perms.ventas.change_venta %}
                 <form method="post" action="{% url 'ventas:confirmar' venta.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-success btn-sm"

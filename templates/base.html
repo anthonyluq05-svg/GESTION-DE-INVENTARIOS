@@ -19,23 +19,43 @@
             </a>
 
             <div class="d-flex gap-2">
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+
+                    <button type="submit" class="btn btn-danger">
+                        Cerrar sesión
+                    </button>
+                </form>
+                {% endif %}
+
+                {% if perms.productos.view_producto %}
+                <a href="{% url 'inicio:dashboard' %}" class="btn btn-outline-light">
+                    Dashboard
+                </a>
 
                 <a href="{% url 'productos:lista' %}" class="btn btn-outline-light">
                     Productos
                 </a>
+                {% endif %}
 
+                {% if perms.compras.view_compra %}
                 <a href="{% url 'compras:lista' %}" class="btn btn-outline-light">
                     Compras
                 </a>
+                {% endif %}
+
+                {% if perms.ventas.view_venta %}
                 <a href="{% url 'ventas:lista' %}" class="btn btn-outline-light">
                     Ventas
                 </a>
+                {% endif %}
+
+                {% if perms.inventario.view_existencia %}
                 <a href="{% url 'inventario:lista' %}" class="btn btn-outline-light">
                     Inventario
                 </a>
-                <a href="{% url 'inicio:dashboard' %}" class="btn btn-outline-light">
-                    Dashboard
-                </a>
+                {% endif %}
 
             </div>
 
