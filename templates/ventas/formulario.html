@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="action-header"><div><h1 class="page-title">Nueva venta</h1><p class="section-lead mb-0">Precios tomados del catálogo de productos</p></div><a class="btn btn-outline-sabor" href="{% url 'ventas:lista' %}">Volver</a></div>
+<div class="action-header"><div><h1 class="page-title">Nueva venta</h1><p class="section-lead mb-0">El registro y el movimiento de inventario se guardan al mismo tiempo · Precios del catálogo</p></div><a class="btn btn-outline-sabor" href="{% url 'ventas:lista' %}">Volver</a></div>
 <div class="card"><div class="card-body p-4"><form method="post">{% csrf_token %}
 {{ form.non_field_errors }}
 <div class="mb-3"><label for="{{ form.cliente.id_for_label }}" class="form-label">Cliente</label>{{ form.cliente }}{{ form.cliente.errors }}<small class="section-lead">Selecciona Público general si el cliente no está registrado.</small></div>
@@ -30,7 +30,7 @@
  </div></div></template>
  <div class="d-flex gap-3 align-items-center my-3"><button type="button" data-formset-add class="btn btn-outline-sabor">+ Agregar otro producto</button><small class="section-lead" data-formset-count></small></div>
 </div>
-<button class="btn btn-sabor px-4" type="submit">Guardar venta</button>
+<button class="btn btn-sabor px-4" type="submit">Registrar venta y descontar stock</button>
 </form></div></div>
 {% endblock %}
 {% block scripts %}<script src="{% static 'js/formset.js' %}"></script>{% endblock %}

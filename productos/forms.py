@@ -5,10 +5,9 @@ from .models import Categoria, Producto
 class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
-        fields = ['nombre', 'descripcion', 'activo']
+        fields = ['nombre', 'activo']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'activo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 

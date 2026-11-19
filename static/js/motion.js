@@ -1,3 +1,16 @@
+/* Fondo contextual: no interfiere con acciones o peticiones. */
+(() => {
+ const path = window.location.pathname.toLowerCase();
+ let area = '';
+ if (path.includes('/clientes/')) area = 'clientes';
+ else if (path.includes('/usuarios/')) area = 'usuarios';
+ else if (path.includes('/categorias/')) area = 'categorias';
+ else if (path.includes('/proveedores/')) area = 'proveedores';
+ else for (const name of ['compras','ventas','reportes','inventario','productos']) {
+   if (path.includes('/' + name + '/')) { area = name; break; }
+ }
+ if (area) document.body.classList.add('sgi-' + area);
+})();
 /* Interacciones progresivas: respetan preferencias de movimiento reducido. */
 (() => {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

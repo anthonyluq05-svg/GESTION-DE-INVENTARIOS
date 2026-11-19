@@ -24,7 +24,14 @@ class ClienteForm(forms.ModelForm):
 @login_required
 def lista_clientes(request):
     exigir_administrador(request)
-    return render(request, 'clientes/lista.html', {'clientes': Cliente.objects.all().order_by('pk')})
+    clientes = list(Cliente.objects.all().order_by('pk'))
+    campos = [c for c in Cliente._meta.concrete_fields if not c.primary_key and not c.is_relation]
+    for cliente in clientes:
+        cliente.datos_visibles = [
+            (str(c.verbose_name).capitalize(), getattr(cliente, c.attname))
+            for c in campos
+        ]
+    return render(request, 'clientes/lista.html', {'clientes': clientes})
 
 
 @login_required

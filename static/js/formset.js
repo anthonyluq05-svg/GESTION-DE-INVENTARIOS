@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addButton = container.querySelector('[data-formset-add]');
     if (!total || !area || !template || !addButton) return;
 
+    // El formulario inicial muestra solo una línea; las demás se crean al pulsar Agregar.
     const updateCount = () => {
       const active = [...area.querySelectorAll('[data-formset-row]')]
         .filter(row => row.style.display !== 'none').length;
@@ -41,6 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
         deletion.checked = true;
         row.style.display = 'none';
       }
+      // Mantener siempre un detalle disponible para ingresar.
+      const activos = [...area.querySelectorAll('[data-formset-row]')].filter(x => x.style.display !== 'none');
+      if (!activos.length && !addButton.disabled) addButton.click();
       updateCount();
     });
     updateCount();

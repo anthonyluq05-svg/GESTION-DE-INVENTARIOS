@@ -78,3 +78,33 @@ body{background:#f9efd9;color:#2d1b11;font-family:Georgia,'DM Sans',serif}
 .bakery-hero-text{padding:2rem 2.4rem}.bakery-hero .brand-kicker{color:#ffc439}.bakery-hero h2{font-family:Georgia,serif;font-weight:bold;font-size:clamp(1.8rem,3.8vw,3.2rem);max-width:550px}.bakery-hero p{max-width:520px}.bakery-hero img{max-width:100%;height:100%;max-height:300px;width:100%;object-fit:cover;opacity:.94;mask-image:linear-gradient(90deg,transparent,#000 24%)}
 .hero-mark{color:#ffd27b;font-size:.83rem}.table-search{max-width:400px;background:#fff9ec}.table tbody tr[hidden]{display:none!important}
 @media(max-width:650px){.bakery-hero{grid-template-columns:1fr}.bakery-hero-text{padding:1.4rem}.bakery-hero img{height:160px;mask-image:linear-gradient(0deg,#000,transparent)}}
+
+/* V4: tablas del tamaño del contenido y centradas, sin estirarse al ancho de pantalla */
+.table-responsive{width:fit-content;max-width:100%;margin-inline:auto;overflow-x:auto;overflow-y:visible}
+.table-responsive .table{width:max-content;max-width:none;margin-bottom:0}
+.table-responsive .table th,.table-responsive .table td{white-space:normal}
+.table-responsive .table td:last-child{white-space:nowrap}
+.client-data{display:grid;gap:.3rem;min-width:180px;max-width:400px;font:500 .92rem/1.45 'DM Sans',sans-serif}
+.client-data>div{display:flex;gap:.5rem;justify-content:space-between;border-bottom:1px dotted #e8d5b3}
+/* Ilustraciones SVG sutiles contextualizadas según el apartado */
+.app-content{position:relative;isolation:isolate}
+.app-content::before{content:"";position:absolute;top:10rem;right:0;width:min(43vw,440px);height:340px;background-image:var(--sgi-watermark,none);background-size:contain;background-position:right top;background-repeat:no-repeat;opacity:.095;z-index:-1;pointer-events:none}
+body.sgi-compras{--sgi-watermark:url('../img/bg-compras.svg')}
+body.sgi-ventas{--sgi-watermark:url('../img/bg-ventas.svg')}
+body.sgi-reportes{--sgi-watermark:url('../img/bg-reportes.svg')}
+body.sgi-inventario{--sgi-watermark:url('../img/bg-inventario.svg')}
+body.sgi-productos,body.sgi-categorias{--sgi-watermark:url('../img/bg-productos.svg')}
+body.sgi-clientes,body.sgi-usuarios{--sgi-watermark:url('../img/bg-clientes.svg')}
+body.sgi-proveedores{--sgi-watermark:url('../img/bg-compras.svg')}
+/* Los detalles se abren por hover en escritorio y por toque/teclado con details */
+.detalle-popover{position:relative;display:inline-block}
+.detalle-popover summary{list-style:none;cursor:pointer;white-space:nowrap}
+.detalle-popover summary::-webkit-details-marker{display:none}
+.detalle-popover-box{display:none;position:absolute;z-index:30;top:calc(100% + 5px);right:0;width:max-content;min-width:240px;max-width:min(85vw,390px);padding:1rem;background:#fff9ed;border:1px solid #e0bb79;box-shadow:0 14px 30px #2511093b;border-radius:10px;color:#3c1d11;text-align:left}
+.detalle-popover[open] .detalle-popover-box,.detalle-popover:hover .detalle-popover-box,.detalle-popover:focus-within .detalle-popover-box{display:block}
+.detalle-popover-box ul{list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.35rem}
+.detalle-popover-box li{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dotted #e7cfad;padding-bottom:.28rem}
+.detalle-popover-box li span{white-space:normal}
+/* Permite que los globos de detalle sobresalgan de la tabla sin ser recortados */
+.table-responsive:has(.detalle-popover){overflow:visible}
+@media(max-width:750px){.app-content::before{width:70vw;height:210px;top:8rem;opacity:.07}.table-responsive:has(.detalle-popover){overflow-x:auto}.detalle-popover-box{position:fixed;top:auto;right:1rem;bottom:1rem;box-shadow:0 2px 30px #22130d77}}

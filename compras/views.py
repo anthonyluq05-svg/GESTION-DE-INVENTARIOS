@@ -6,14 +6,20 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .forms import CompraForm, DetalleCompraFormSet, ProveedorForm
-from .models import Compra, Proveedor
+from .models import Compra, Proveedor, DetalleCompra
 from .services import confirmar_compra
 
 
 @login_required
 @permission_required('compras.view_compra', raise_exception=True)
 def lista_compras(request):
-    compras = Compra.objects.select_related('proveedor', 'usuario').order_by('-fecha')
+    compras = list(Compra.objects.select_related('proveedor', 'usuario').order_by('-fecha'))
+    detalles = DetalleCompra.objects.filter(compra_id__in=[c.pk for c in compras]).select_related('producto').order_by('pk')
+    por_compra = {}
+    for item in detalles:
+        por_compra.setdefault(item.compra_id, []).append(item)
+    for compra in compras:
+        compra.detalles_vista = por_compra.get(compra.pk, [])
     return render(request, 'compras/lista.html', {'compras': compras})
 
 
@@ -25,20 +31,25 @@ def crear_compra(request):
         form = CompraForm(request.POST, instance=compra)
         formset = DetalleCompraFormSet(request.POST, instance=compra)
         if form.is_valid() and formset.is_valid():
-            with transaction.atomic():
-                compra = form.save(commit=False)
-                compra.usuario = request.user
-                compra.estado = 'BORRADOR'
-                compra.save()
-                formset.instance = compra
-                detalles = formset.save(commit=False)
-                for detalle in detalles:
-                    detalle.compra = compra
-                    # Precio tomado del catálogo, nunca del formulario.
-                    detalle.costo_unitario = detalle.producto.precio_compra
-                    detalle.save()
-            messages.success(request, 'Compra registrada en borrador.')
-            return redirect('compras:lista')
+            try:
+                # Se guarda y confirma como una ÚNICA transacción: si falla stock
+                # o algún detalle, no quedan compras parciales ni borradores.
+                with transaction.atomic():
+                    compra = form.save(commit=False)
+                    compra.usuario = request.user
+                    compra.estado = 'BORRADOR'
+                    compra.save()
+                    formset.instance = compra
+                    for detalle in formset.save(commit=False):
+                        detalle.compra = compra
+                        detalle.costo_unitario = detalle.producto.precio_compra
+                        detalle.save()
+                    confirmar_compra(compra.pk)
+            except ValueError as exc:
+                form.add_error(None, str(exc))
+            else:
+                messages.success(request, 'Compra registrada: inventario actualizado.')
+                return redirect('compras:lista')
     else:
         form = CompraForm(instance=compra)
         formset = DetalleCompraFormSet(instance=compra)
