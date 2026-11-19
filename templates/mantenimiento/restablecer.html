@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Mantenimiento técnico · SGI{% endblock %}
+{% block content %}
+<section class="maintenance-panel">
+ <p class="brand-kicker">🔐 Acceso técnico reservado</p>
+ <h1 class="page-title">Restablecer datos comerciales</h1>
+ <div class="alert alert-danger"><strong>Operación destructiva.</strong> Borra categorías, productos, existencias, movimientos, clientes, proveedores, compras y ventas, incluidos sus detalles. NO borra usuarios ni permisos. Solo procede tras generar un respaldo PostgreSQL.</div>
+ {% if not habilitado %}
+ <div class="alert alert-warning">Función deshabilitada. El técnico debe activarla temporalmente en <code>.env</code> y reiniciar Django.</div>
+ {% else %}
+ <form method="post" autocomplete="off" class="card p-4" data-confirm="¿Confirmas el borrado de TODOS los datos comerciales? No se puede deshacer sin restaurar un respaldo.">
+ {% csrf_token %}
+ <label for="sgi-reset-key" class="form-label">Clave técnica independiente</label>
+ <input id="sgi-reset-key" type="password" name="clave" class="form-control mb-3" required autocomplete="off" minlength="12">
+ <label for="sgi-reset-phrase" class="form-label">Escribe exactamente: <strong>BORRAR DATOS COMERCIALES</strong></label>
+ <input id="sgi-reset-phrase" name="confirmacion" class="form-control mb-4" required autocomplete="off" spellcheck="false">
+ <button class="btn btn-danger" type="submit">🗑️ Respaldar y eliminar datos comerciales</button>
+ </form>
+ {% endif %}
+ <p class="text-muted small mt-3">Realizar solo con autorización del propietario y fuera del horario de operaciones. El reseteo conserva la contraseña de las cuentas existentes.</p>
+</section>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.urls import path
+from mantenimiento.views import restablecer_comercio
 from usuarios.views import lista_usuarios, crear_usuario, editar_usuario, eliminar_usuario
 from ventas.clientes import lista_clientes, crear_cliente, editar_cliente, eliminar_cliente
 from .views import (
@@ -9,6 +10,7 @@ from .views import (
 app_name = 'productos'
 
 urlpatterns = [
+    path('mantenimiento/restablecer-comercio/', restablecer_comercio, name='restablecer_comercio'),
     path('', ProductoListView.as_view(), name='lista'),
     path('nuevo/', ProductoCreateView.as_view(), name='crear'),
     path('<int:pk>/editar/', ProductoUpdateView.as_view(), name='editar'),

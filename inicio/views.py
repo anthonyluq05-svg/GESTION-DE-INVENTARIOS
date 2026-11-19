@@ -1,3 +1,8 @@
+import calendar
+import os
+from datetime import date, timedelta
+from decimal import Decimal
+
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import DecimalField, ExpressionWrapper, F, Sum
 from django.shortcuts import render
@@ -43,7 +48,52 @@ def dashboard(request):
     ultimas_ventas = Venta.objects.filter(
         estado='CONFIRMADA'
     ).select_related('cliente', 'usuario').order_by('-fecha')[:5]
+    # Cuatro intervalos sin solapamiento: 1–7, 8–14, 15–21 y 22–fin.
+    # La fecha seleccionada se valida y los importes proceden de precios históricos.
+    mes_param = request.GET.get('mes', hoy.strftime('%Y-%m'))
+    try:
+        anio, numero_mes = [int(pieza) for pieza in mes_param.split('-')]
+        mes_inicio = date(anio, numero_mes, 1)
+        if not 2020 <= anio <= hoy.year + 1:
+            raise ValueError('Año no permitido')
+    except (ValueError, TypeError):
+        mes_inicio = hoy.replace(day=1)
+    ultimo_dia = calendar.monthrange(mes_inicio.year, mes_inicio.month)[1]
+    mes_fin = mes_inicio.replace(day=ultimo_dia)
+    def series(modelo, campo_fecha, importe):
+        montos = []
+        for comienzo, cierre in [(1, 7), (8, 14), (15, 21), (22, ultimo_dia)]:
+            filtros = {
+                ('venta__estado' if modelo is DetalleVenta else 'compra__estado'): 'CONFIRMADA',
+                f'{campo_fecha}__date__gte': mes_inicio.replace(day=comienzo),
+                f'{campo_fecha}__date__lte': mes_inicio.replace(day=cierre),
+            }
+            montos.append(modelo.objects.filter(**filtros).aggregate(
+                total=Sum(importe)
+            )['total'] or Decimal('0'))
+        techo = max(max(montos), Decimal('1'))
+        return [
+            {'etiqueta': f'Semana {i + 1}', 'dias': f'{inicio_dia}–{min(fin_dia, ultimo_dia)}',
+             'monto': valor, 'altura': max(3, round(float(valor / techo) * 100)) if valor else 2}
+            for i, ((inicio_dia, fin_dia), valor) in enumerate(zip(
+                [(1, 7), (8, 14), (15, 21), (22, ultimo_dia)], montos
+            ))
+        ]
+    barras_ventas = series(DetalleVenta, 'venta__fecha', subtotal_venta)
+    barras_compras = series(DetalleCompra, 'compra__fecha', subtotal_compra)
+    # Filtrar solo operaciones confirmadas (también para las gráficas).
+    opciones_meses = []
+    cursor_mes = hoy.replace(day=1)
+    for _ in range(24):
+        opciones_meses.append({'valor': cursor_mes.strftime('%Y-%m'),
+            'texto': cursor_mes.strftime('%m/%Y')})
+        cursor_mes = (cursor_mes - timedelta(days=1)).replace(day=1)
     return render(request, 'inicio/dashboard.html', {
+        'barras_ventas': barras_ventas,
+        'barras_compras': barras_compras,
+        'mes_elegido': mes_inicio.strftime('%Y-%m'),
+        'opciones_meses': opciones_meses,
+        'puede_restablecer': request.user.is_superuser and request.user.username == os.getenv('SGI_MAINTENANCE_USER', ''),
         'total_productos': total_productos,
         'total_unidades': total_unidades,
         'stock_bajo': stock_bajo,

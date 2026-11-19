@@ -14,7 +14,16 @@
  <div class="col-md-6"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">💰 Ventas confirmadas hoy</p><h2 class="text-success fw-bold">S/ {{ ventas_hoy|floatformat:2 }}</h2></div></div></div>
  <div class="col-md-6"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">🧺 Compras confirmadas hoy</p><h2 class="page-title">S/ {{ compras_hoy|floatformat:2 }}</h2></div></div></div>
 </div>
+
+<section class="charts-section mb-4" aria-label="Gráficos de movimientos mensuales">
+ <div class="action-header"><div><p class="brand-kicker">📊 Indicadores comerciales</p><h2 class="h3 mb-0">Compras y ventas por semana</h2><small>Cada semana: días 1–7, 8–14, 15–21 y 22–fin</small></div>
+ <form method="get" class="d-flex align-items-center gap-2"><label for="mes-graficos" class="form-label mb-0">Mes</label><select id="mes-graficos" name="mes" class="form-select" onchange="this.form.requestSubmit()">{% for opcion in opciones_meses %}<option value="{{ opcion.valor }}" {% if opcion.valor == mes_elegido %}selected{% endif %}>{{ opcion.texto }}</option>{% endfor %}</select><noscript><button class="btn btn-sabor" type="submit">Mostrar</button></noscript></form></div>
+ <div class="row g-4"><div class="col-lg-6"><div class="card p-3 h-100"><h3 class="h5">💰 Ventas confirmadas</h3><div class="weekly-chart" role="img" aria-label="Importes de ventas por semana en soles">{% for barra in barras_ventas %}<div class="chart-column"><strong>S/ {{ barra.monto|floatformat:2 }}</strong><div class="chart-track"><span class="chart-bar chart-sales" style="--bar-height:{{ barra.altura }}%"></span></div><span>{{ barra.etiqueta }}</span><small>Días {{ barra.dias }}</small></div>{% endfor %}</div></div></div>
+ <div class="col-lg-6"><div class="card p-3 h-100"><h3 class="h5">🧺 Compras confirmadas</h3><div class="weekly-chart" role="img" aria-label="Importes de compras por semana en soles">{% for barra in barras_compras %}<div class="chart-column"><strong>S/ {{ barra.monto|floatformat:2 }}</strong><div class="chart-track"><span class="chart-bar chart-purchases" style="--bar-height:{{ barra.altura }}%"></span></div><span>{{ barra.etiqueta }}</span><small>Días {{ barra.dias }}</small></div>{% endfor %}</div></div></div></div>
+</section>
 <div class="card"><div class="card-header">🛒 Últimas ventas confirmadas</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>N.º</th><th>Cliente</th><th>Fecha</th><th>Vendedor</th></tr></thead><tbody>
 {% for venta in ultimas_ventas %}<tr><td>{{ venta.id }}</td><td>{{ venta.cliente.nombre|default:'Público general' }}</td><td>{{ venta.fecha|date:'d/m/Y H:i' }}</td><td>{{ venta.usuario.username }}</td></tr>{% empty %}<tr><td colspan="4">Aún no hay ventas confirmadas.</td></tr>{% endfor %}
 </tbody></table></div></div></div>
 {% endblock %}
+
+{% if puede_restablecer %}<div class="mt-4 text-end"><a class="btn btn-outline-danger btn-sm" href="{% url 'productos:restablecer_comercio' %}">🔐 Mantenimiento técnico · Borrar registros comerciales</a></div>{% endif %}
