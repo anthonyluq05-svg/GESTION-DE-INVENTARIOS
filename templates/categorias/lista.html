@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="action-header"><h1 class="page-title">Categorías</h1>{% if perms.productos.add_categoria %}<a class="btn btn-sabor" href="{% url 'productos:categoria_crear' %}">+ Nueva categoría</a>{% endif %}</div>
+<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Nombre</th><th>Estado</th></tr></thead><tbody>
+{% for categoria in categorias %}<tr><td>{{ categoria.nombre }}</td><td>{% if categoria.activo %}Activa{% else %}Inactiva{% endif %}</td></tr>{% empty %}<tr><td colspan="2">No existen categorías.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

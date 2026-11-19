@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="page-title">Eliminar producto</h1>
+<div class="card"><div class="card-body">
+<p>¿Eliminar definitivamente <strong>{{ object.codigo }} — {{ object.nombre }}</strong>?</p>
+<p class="text-danger">Si existen compras, ventas o registros de inventario, la operación se rechazará. En esos casos desactiva el producto desde Editar.</p>
+<form method="post">{% csrf_token %}<button type="submit" class="btn btn-danger">Eliminar producto</button> <a class="btn btn-outline-sabor" href="{% url 'productos:lista' %}">Cancelar</a></form>
+</div></div>
+{% endblock %}

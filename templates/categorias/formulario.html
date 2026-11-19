@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="page-title">Nueva categoría</h1><div class="card"><div class="card-body">
+<form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-sabor" type="submit">Guardar categoría</button> <a href="{% url 'productos:categorias' %}" class="btn btn-outline-sabor">Volver</a></form>
+</div></div>
+{% endblock %}

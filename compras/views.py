@@ -1,64 +1,78 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
-from .models import Compra
-from .forms import CompraForm, DetalleCompraFormSet
+from .forms import CompraForm, DetalleCompraFormSet, ProveedorForm
+from .models import Compra, Proveedor
 from .services import confirmar_compra
 
 
 @login_required
-@permission_required("compras.view_compra", raise_exception=True)
+@permission_required('compras.view_compra', raise_exception=True)
 def lista_compras(request):
-    compras = Compra.objects.select_related("proveedor", "usuario").order_by("-fecha")
-
-    return render(request, "compras/lista.html", {"compras": compras})
+    compras = Compra.objects.select_related('proveedor', 'usuario').order_by('-fecha')
+    return render(request, 'compras/lista.html', {'compras': compras})
 
 
 @login_required
-@permission_required("compras.add_compra", raise_exception=True)
+@permission_required('compras.add_compra', raise_exception=True)
 def crear_compra(request):
     compra = Compra(usuario=request.user)
-
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CompraForm(request.POST, instance=compra)
         formset = DetalleCompraFormSet(request.POST, instance=compra)
-
         if form.is_valid() and formset.is_valid():
             with transaction.atomic():
                 compra = form.save(commit=False)
                 compra.usuario = request.user
-                compra.estado = "BORRADOR"
+                compra.estado = 'BORRADOR'
                 compra.save()
-
                 formset.instance = compra
-                formset.save()
-
-            messages.success(request, "Compra registrada correctamente.")
-            return redirect("compras:lista")
-
+                detalles = formset.save(commit=False)
+                for detalle in detalles:
+                    detalle.compra = compra
+                    # Precio tomado del catálogo, nunca del formulario.
+                    detalle.costo_unitario = detalle.producto.precio_compra
+                    detalle.save()
+            messages.success(request, 'Compra registrada en borrador.')
+            return redirect('compras:lista')
     else:
         form = CompraForm(instance=compra)
         formset = DetalleCompraFormSet(instance=compra)
-
-    return render(
-        request, "compras/formulario.html", {"form": form, "formset": formset}
-    )
+    return render(request, 'compras/formulario.html', {
+        'form': form, 'formset': formset,
+    })
 
 
 @login_required
-@permission_required("compras.change_compra", raise_exception=True)
+@permission_required('compras.change_compra', raise_exception=True)
+@require_POST
 def confirmar_compra_view(request, pk):
-    if request.method != "POST":
-        return redirect("compras:lista")
-
     compra = get_object_or_404(Compra, pk=pk)
-
     try:
         confirmar_compra(compra.pk)
-        messages.success(request, "Compra confirmada. Stock actualizado.")
-    except ValueError as error:
-        messages.error(request, str(error))
+        messages.success(request, 'Compra confirmada: inventario actualizado.')
+    except ValueError as exc:
+        messages.error(request, str(exc))
+    return redirect('compras:lista')
 
-    return redirect("compras:lista")
+
+@login_required
+@permission_required('compras.view_proveedor', raise_exception=True)
+def lista_proveedores(request):
+    return render(request, 'proveedores/lista.html', {
+        'proveedores': Proveedor.objects.order_by('nombre')
+    })
+
+
+@login_required
+@permission_required('compras.add_proveedor', raise_exception=True)
+def crear_proveedor(request):
+    form = ProveedorForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Proveedor registrado correctamente.')
+        return redirect('compras:proveedores')
+    return render(request, 'proveedores/formulario.html', {'form': form})

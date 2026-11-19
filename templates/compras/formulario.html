@@ -1,53 +1,43 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-
-<h2>Nueva compra</h2>
-
-<form method="post">
-    {% csrf_token %}
-
-    <div class="mb-4">
-        <h5>Proveedor</h5>
-        {{ form.as_p }}
-    </div>
-
-    <h5>Productos de la compra</h5>
-
-    {{ formset.management_form }}
-    {{ formset.non_form_errors }}
-
-    {% for detalle in formset %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <h6>Producto {{ forloop.counter }}</h6>
-
-            {% for hidden in detalle.hidden_fields %}
-            {{ hidden }}
-            {% endfor %}
-
-            {{ detalle.non_field_errors }}
-
-            {% for campo in detalle.visible_fields %}
-            <div class="mb-2">
-                <label class="form-label">
-                    {{ campo.label }}
-                </label>
-                {{ campo }}
-                {{ campo.errors }}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endfor %}
-
-    <button type="submit" class="btn btn-success">
-        Guardar compra
-    </button>
-
-    <a href="{% url 'compras:lista' %}" class="btn btn-secondary">
-        Cancelar
-    </a>
+<div class="action-header"><div><h1 class="page-title">Nueva compra</h1><p class="section-lead mb-0">El costo se toma automáticamente del catálogo</p></div><a class="btn btn-outline-sabor" href="{% url 'compras:lista' %}">Volver</a></div>
+<div class="card"><div class="card-body p-4">
+<form method="post" id="operacion-form">{% csrf_token %}
+{{ form.non_field_errors }}
+<div class="mb-3"><label class="form-label" for="{{ form.proveedor.id_for_label }}">Proveedor</label>{{ form.proveedor }}{{ form.proveedor.errors }}</div>
+{% if perms.compras.add_proveedor %}<p><a href="{% url 'compras:proveedor_crear' %}">+ Crear proveedor</a></p>{% endif %}
+<h5 class="mt-4">Productos de la compra</h5>
+<div data-formset="{{ formset.prefix }}">
+ {{ formset.management_form }}{{ formset.non_form_errors }}
+ <div data-formset-rows>
+ {% for detalle in formset %}
+ <div class="card detail-row mb-3" data-formset-row><div class="card-body">
+  {% for hidden in detalle.hidden_fields %}{{ hidden }}{% endfor %}
+  {{ detalle.non_field_errors }}
+  <div class="row g-3">
+  {% for campo in detalle.visible_fields %}
+    {% if campo.name == 'DELETE' %}<div class="d-none">{{ campo }}</div>
+    {% else %}<div class="col-md-5"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{{ campo.errors }}</div>{% endif %}
+  {% endfor %}
+  </div><button type="button" class="btn btn-sm btn-outline-danger mt-3" data-formset-remove>Quitar fila</button>
+ </div></div>
+ {% endfor %}
+ </div>
+ <template data-formset-empty>
+ <div class="card detail-row mb-3" data-formset-row><div class="card-body">
+   {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
+   <div class="row g-3">{% for campo in formset.empty_form.visible_fields %}
+     {% if campo.name == 'DELETE' %}<div class="d-none">{{ campo }}</div>
+     {% else %}<div class="col-md-5"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}</div>{% endif %}
+   {% endfor %}</div>
+   <button type="button" class="btn btn-sm btn-outline-danger mt-3" data-formset-remove>Quitar fila</button>
+ </div></div>
+ </template>
+ <div class="d-flex align-items-center gap-3 my-3"><button type="button" class="btn btn-outline-sabor" data-formset-add>+ Agregar otro producto</button><small class="section-lead" data-formset-count></small></div>
+</div>
+<button type="submit" class="btn btn-sabor px-4">Guardar compra</button>
 </form>
-
+</div></div>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/formset.js' %}"></script>{% endblock %}
