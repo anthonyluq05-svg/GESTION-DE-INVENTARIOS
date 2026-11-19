@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<div class="action-header"><div><p class="brand-kicker">🤝 Relaciones comerciales</p><h1 class="page-title">Clientes</h1><p class="section-lead">Personas y negocios registrados</p></div><a class="btn btn-sabor" href="{% url 'productos:cliente_crear' %}">➕ Agregar cliente</a></div>
+<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Cliente</th><th>Acciones</th></tr></thead><tbody>
+{% for cliente in clientes %}<tr><td><strong>{{ cliente }}</strong></td><td class="text-nowrap"><a class="btn btn-warning btn-sm" href="{% url 'productos:cliente_editar' cliente.pk %}">✏️ Editar</a> <form method="post" action="{% url 'productos:cliente_eliminar' cliente.pk %}" class="d-inline" data-confirm="¿Eliminar este cliente? Solo será posible si no tiene ventas vinculadas.">{% csrf_token %}<button class="btn btn-danger btn-sm">🗑️ Eliminar</button></form></td></tr>
+{% empty %}<tr><td colspan="2">Todavía no hay clientes.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

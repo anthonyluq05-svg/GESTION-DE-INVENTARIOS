@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db import transaction
+from django.db import transaction, IntegrityError
+from django.db.models.deletion import ProtectedError, RestrictedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -76,3 +77,35 @@ def crear_proveedor(request):
         messages.success(request, 'Proveedor registrado correctamente.')
         return redirect('compras:proveedores')
     return render(request, 'proveedores/formulario.html', {'form': form})
+
+
+@login_required
+@permission_required('compras.change_proveedor', raise_exception=True)
+def editar_proveedor(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    form = ProveedorForm(request.POST or None, instance=proveedor)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Proveedor actualizado correctamente.')
+        return redirect('compras:proveedores')
+    return render(request, 'proveedores/formulario.html', {'form': form, 'proveedor': proveedor})
+
+
+@login_required
+@permission_required('compras.delete_proveedor', raise_exception=True)
+def eliminar_proveedor(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == 'POST':
+        # Protección adicional incluso si la FK Compra.proveedor usa CASCADE.
+        if Compra.objects.filter(proveedor=proveedor).exists():
+            messages.error(request, 'Este proveedor tiene compras relacionadas. Desactívalo desde Editar en lugar de eliminarlo.')
+            return redirect('compras:proveedores')
+        try:
+            with transaction.atomic():
+                proveedor.delete()
+        except (ProtectedError, RestrictedError, IntegrityError):
+            messages.error(request, 'Este proveedor tiene compras relacionadas. Desactívalo desde Editar en lugar de eliminarlo.')
+        else:
+            messages.success(request, 'Proveedor eliminado correctamente.')
+        return redirect('compras:proveedores')
+    return render(request, 'proveedores/confirmar_eliminar.html', {'proveedor': proveedor})

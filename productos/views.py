@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db.models.deletion import ProtectedError
+from django.db import transaction, IntegrityError
+from django.db.models.deletion import ProtectedError, RestrictedError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
@@ -70,3 +71,35 @@ class CategoriaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateVie
     form_class = CategoriaForm
     template_name = 'categorias/formulario.html'
     success_url = reverse_lazy('productos:categorias')
+
+
+class CategoriaUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'productos.change_categoria'
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = 'categorias/formulario.html'
+    success_url = reverse_lazy('productos:categorias')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Categoría actualizada correctamente.')
+        return super().form_valid(form)
+
+
+class CategoriaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'productos.delete_categoria'
+    model = Categoria
+    template_name = 'categorias/confirmar_eliminar.html'
+    success_url = reverse_lazy('productos:categorias')
+
+    def form_valid(self, form):
+        if Producto.objects.filter(categoria=self.get_object()).exists():
+            messages.error(self.request, 'Esta categoría tiene productos relacionados. Desactívala desde Editar en lugar de eliminarla.')
+            return redirect(self.success_url)
+        try:
+            with transaction.atomic():
+                self.get_object().delete()
+        except (ProtectedError, RestrictedError, IntegrityError):
+            messages.error(self.request, 'Esta categoría tiene productos relacionados. No se puede eliminar; desactívala desde Editar.')
+        else:
+            messages.success(self.request, 'Categoría eliminada.')
+        return redirect(self.success_url)

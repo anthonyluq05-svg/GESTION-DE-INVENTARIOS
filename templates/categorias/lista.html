@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="action-header"><h1 class="page-title">Categorías</h1>{% if perms.productos.add_categoria %}<a class="btn btn-sabor" href="{% url 'productos:categoria_crear' %}">+ Nueva categoría</a>{% endif %}</div>
-<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Nombre</th><th>Estado</th></tr></thead><tbody>
-{% for categoria in categorias %}<tr><td>{{ categoria.nombre }}</td><td>{% if categoria.activo %}Activa{% else %}Inactiva{% endif %}</td></tr>{% empty %}<tr><td colspan="2">No existen categorías.</td></tr>{% endfor %}</tbody></table></div>
-{% endblock %}
+{% extends 'base.html' %}{% block content %}
+<div class="action-header"><div><p class="brand-kicker">🏷️ Organización del catálogo</p><h1 class="page-title">Categorías</h1><p class="section-lead">Agrupa panes, pasteles y demás productos</p></div>{% if perms.productos.add_categoria %}<a class="btn btn-sabor" href="{% url 'productos:categoria_crear' %}">➕ Nueva categoría</a>{% endif %}</div>
+<div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>Nombre</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+{% for categoria in categorias %}<tr><td><strong>{{ categoria.nombre }}</strong></td><td>{% if categoria.activo %}<span class="badge text-bg-success">Activa</span>{% else %}<span class="badge text-bg-secondary">Inactiva</span>{% endif %}</td><td class="text-nowrap">{% if perms.productos.change_categoria %}<a class="btn btn-sm btn-warning" href="{% url 'productos:categoria_editar' categoria.pk %}">✏️ Editar</a>{% endif %} {% if perms.productos.delete_categoria %}<a class="btn btn-sm btn-danger" href="{% url 'productos:categoria_eliminar' categoria.pk %}">🗑️ Eliminar</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="3">No existen categorías.</td></tr>{% endfor %}</tbody></table></div>{% endblock %}

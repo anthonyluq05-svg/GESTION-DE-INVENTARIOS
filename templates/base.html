@@ -1,43 +1,29 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}El Sabor Huamanguino · SGI{% endblock %}</title>
-  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'css/panaderia.css' %}" rel="stylesheet">
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark navbar-sabor">
- <div class="container-fluid px-lg-4">
-  <a class="navbar-brand" href="{% url 'inicio:dashboard' %}">🍞 El Sabor Huamanguino <span class="fw-normal small">| SGI</span></a>
-  <button class="navbar-toggler" data-sgi-navbar-toggle type="button" data-bs-toggle="collapse" data-bs-target="#menuSgi" aria-controls="menuSgi" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
-  <div class="collapse navbar-collapse" id="menuSgi">
-   <div class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-1">
-    {% if user.is_authenticated %}
-      <a class="nav-link" href="{% url 'inicio:dashboard' %}">Inicio</a>
-      {% if perms.productos.view_producto %}<a class="nav-link" href="{% url 'productos:lista' %}">Productos</a>{% endif %}
-      {% if perms.productos.view_categoria %}<a class="nav-link" href="{% url 'productos:categorias' %}">Categorías</a>{% endif %}
-      {% if perms.compras.view_compra %}<a class="nav-link" href="{% url 'compras:lista' %}">Compras</a>{% endif %}
-      {% if perms.compras.view_proveedor %}<a class="nav-link" href="{% url 'compras:proveedores' %}">Proveedores</a>{% endif %}
-      {% if perms.ventas.view_venta %}<a class="nav-link" href="{% url 'ventas:lista' %}">Ventas</a>{% endif %}
-      {% if perms.inventario.view_existencia %}<a class="nav-link" href="{% url 'inventario:lista' %}">Inventario</a>{% endif %}
-      {% if es_administrador %}<a class="nav-link" href="{% url 'reportes:ventas' %}">Reportes</a>{% endif %}
-      <span class="text-warning small ms-lg-3 me-lg-1">{{ user.username }}</span>
-      <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-light">Salir</button></form>
-    {% endif %}
-   </div>
-  </div>
- </div>
-</nav>
-<main class="app-content">
- {% if messages %}{% for message in messages %}
- <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>
- {% endfor %}{% endif %}
- {% block content %}{% endblock %}
-</main>
-<script src="{% static 'js/navbar.js' %}"></script>
-{% block scripts %}{% endblock %}
-</body>
-</html>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}El Sabor Huamanguino · SGI{% endblock %}</title>
+<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"><link href="{% static 'css/panaderia.css' %}" rel="stylesheet"></head>
+<body><nav class="navbar navbar-expand-lg navbar-dark navbar-sabor"><div class="container-fluid px-lg-4">
+<a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'inicio:dashboard' %}"><span class="brand-emoji">🥐</span><span>El Sabor Huamanguino <small class="d-block brand-subtitle">Gestión comercial</small></span></a>
+<button class="navbar-toggler" data-sgi-navbar-toggle type="button" aria-controls="menuSgi" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="menuSgi"><div class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-1">
+{% if user.is_authenticated %}
+<a class="nav-link" href="{% url 'inicio:dashboard' %}">🏠 Inicio</a>
+{% if perms.compras.view_compra %}<a class="nav-link" href="{% url 'compras:lista' %}">🧺 Compras</a>{% endif %}
+{% if perms.ventas.view_venta %}<a class="nav-link" href="{% url 'ventas:lista' %}">🛒 Ventas</a>{% endif %}
+{% if perms.inventario.view_existencia %}<a class="nav-link" href="{% url 'inventario:lista' %}">📦 Inventario</a>{% endif %}
+{% if es_administrador or user.is_superuser %}
+<details class="nav-dropdown"><summary class="nav-link">📊 Reportes <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-menu">
+<a href="{% url 'reportes:ventas' %}">💰 Ventas</a>
+{% url 'reportes:compras' as compras_reporte_url %}{% if compras_reporte_url %}<a href="{{ compras_reporte_url }}">🧾 Compras</a>{% endif %}
+{% url 'reportes:inventario' as inventario_reporte_url %}{% if inventario_reporte_url %}<a href="{{ inventario_reporte_url }}">📦 Inventario</a>{% endif %}
+</div></details>
+<details class="nav-dropdown"><summary class="nav-link">➕ Agregar <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-menu">
+<a href="{% url 'productos:lista' %}">🥖 Productos</a><a href="{% url 'productos:categorias' %}">🏷️ Categorías</a><a href="{% url 'compras:proveedores' %}">🚚 Proveedores</a><a href="{% url 'productos:usuarios_lista' %}">👤 Usuarios</a>
+</div></details>
+{% endif %}
+<span class="nav-user">👋 {{ user.username }}</span>
+<form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-light">Salir</button></form>
+{% endif %}</div></div></div></nav>
+<main class="app-content">{% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main>
+<footer class="site-footer">🥖 El Sabor Huamanguino <span>· Tradición que crece contigo</span></footer>
+<script src="{% static 'js/navbar.js' %}"></script>{% block scripts %}{% endblock %}</body></html>

@@ -26,3 +26,18 @@ body{background:linear-gradient(150deg,#fff9ed 0%,#fff3df 100%);color:#44281a;mi
 .brand-kicker{font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#a65420;font-size:.8rem;}
 .detail-row{border-left:4px solid var(--sabor-orange);}
 @media(max-width:800px){.auth-layout{grid-template-columns:1fr;margin:1.2rem .3rem}.auth-art{padding:.8rem}.auth-art img{max-height:180px}.auth-form{padding:1.4rem}.app-content{padding:1.2rem .7rem 3rem}}
+
+/* V2: identidad cálida de panadería */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Nunito:wght@500;600;700;800;900&display=swap');
+:root{--sabor-chocolate:#51250e;--sabor-dark:#3d1d12;--sabor-orange:#f99429;--sabor-gold:#ffc436;--sabor-cream:#fff9ef}
+body{font-family:'DM Sans',system-ui,sans-serif;background:radial-gradient(circle at 88% 7%,#ffdda155,transparent 35%),linear-gradient(165deg,#fffaf0,#fff2d9)}
+h1,h2,h3,h4,h5,.page-title,.navbar-brand{font-family:'Nunito',system-ui,sans-serif}
+.page-title{font-weight:900}.navbar-brand{line-height:1.05}.brand-emoji{font-size:1.8rem}.brand-subtitle{color:#ffcf83;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+.nav-dropdown{position:relative}.nav-dropdown summary{list-style:none;cursor:pointer;user-select:none;white-space:nowrap}.nav-dropdown summary::-webkit-details-marker{display:none}.nav-dropdown-menu{position:absolute;z-index:100;top:100%;right:0;width:220px;background:#fffdfa;box-shadow:0 16px 35px #30170f3b;border:1px solid #f2dbb7;border-radius:13px;padding:7px;display:grid;gap:3px}.nav-dropdown-menu a{padding:10px 13px;text-decoration:none;color:#4e2415;font-weight:700;border-radius:9px}.nav-dropdown-menu a:hover{background:#fff0d4;color:#a34710}.nav-dropdown[open]>summary{background:#ffffff25;color:#fff}.nav-user{color:#ffd899;font-weight:700;font-size:.85rem;margin:0 .6rem}
+.card{border-radius:20px;box-shadow:0 10px 30px #5d331015;transition:box-shadow .2s ease}.card:hover{box-shadow:0 13px 36px #5d331025}.card-header{background:linear-gradient(100deg,#fff0d7,#fff9ef);color:#5c2c11}
+.table-responsive{background:#fff}.table{--bs-table-hover-bg:#ffeccf;--bs-table-striped-bg:#fff8ed}.table tbody tr{vertical-align:middle}.table td,.table th{padding:.9rem .85rem}.table thead{--bs-table-bg:#5b2915;--bs-table-color:#fff3df}
+.btn{border-radius:10px;font-weight:700}.btn-warning{background:#ffcb39;border-color:#ffb921;color:#412310}.btn-warning:hover{background:#f6b218;border-color:#f6b218}.btn-danger{background:#c63a31;border-color:#c63a31}.btn-outline-sabor:focus-visible,.nav-link:focus-visible,.nav-dropdown summary:focus-visible{outline:3px solid #ffb52f;outline-offset:2px}
+.form-card{max-width:800px}.form-label{font-weight:700;color:#5b321f}.form-control,.form-select{border-radius:10px;padding:.64rem .8rem;border-color:#e1c9ad}.action-header{padding-bottom:1rem;border-bottom:2px dashed #f2d7ad}.brand-kicker{color:#ac551a}.site-footer{text-align:center;font-size:.82rem;color:#89674e;padding:1.5rem 1rem 2rem}.site-footer span{color:#ba855b}
+.auth-layout{max-width:1070px}.auth-art-bakery{padding:0;background:#ffca61}.auth-art-bakery img{width:100%;height:100%;max-height:none;object-fit:cover;border-radius:0}.auth-form{padding:3rem}.auth-form h1{font-size:2.5rem}
+@media(max-width:991px){.nav-dropdown-menu{position:static;width:auto;box-shadow:none;margin:0 0 8px 10px}.nav-user{display:block;margin:.6rem 0}.navbar-nav{padding-bottom:1rem}}
+@media(max-width:800px){.auth-art-bakery img{max-height:240px}.auth-form{padding:1.4rem}}

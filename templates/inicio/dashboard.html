@@ -2,13 +2,13 @@
 {% block content %}
 <div class="mb-4"><p class="brand-kicker mb-1">Panadería y pastelería</p><h1 class="page-title">Bienvenido a El Sabor Huamanguino</h1><p class="section-lead">Resumen del movimiento comercial de hoy</p></div>
 <div class="row g-3 mb-4">
- <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">Productos activos</p><h2 class="page-title">{{ total_productos }}</h2><small>Productos en el catálogo</small></div></div></div>
- <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">Unidades disponibles</p><h2 class="page-title">{{ total_unidades }}</h2><small>Existencias en almacén</small></div></div></div>
- <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">Productos con stock bajo</p><h2 class="text-danger fw-bold">{{ stock_bajo }}</h2><small>Revisa la sección Inventario</small></div></div></div>
- <div class="col-md-6"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">Ventas confirmadas hoy</p><h2 class="text-success fw-bold">S/ {{ ventas_hoy|floatformat:2 }}</h2></div></div></div>
- <div class="col-md-6"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">Compras confirmadas hoy</p><h2 class="page-title">S/ {{ compras_hoy|floatformat:2 }}</h2></div></div></div>
+ <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">🥐 Productos activos</p><h2 class="page-title">{{ total_productos }}</h2><small>Productos en el catálogo</small></div></div></div>
+ <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">📦 Unidades disponibles</p><h2 class="page-title">{{ total_unidades }}</h2><small>Existencias en almacén</small></div></div></div>
+ <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">⚠️ Productos con stock bajo</p><h2 class="text-danger fw-bold">{{ stock_bajo }}</h2><small>Revisa la sección Inventario</small></div></div></div>
+ <div class="col-md-6"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">💰 Ventas confirmadas hoy</p><h2 class="text-success fw-bold">S/ {{ ventas_hoy|floatformat:2 }}</h2></div></div></div>
+ <div class="col-md-6"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">🧺 Compras confirmadas hoy</p><h2 class="page-title">S/ {{ compras_hoy|floatformat:2 }}</h2></div></div></div>
 </div>
-<div class="card"><div class="card-header">Últimas ventas confirmadas</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>N.º</th><th>Cliente</th><th>Fecha</th><th>Vendedor</th></tr></thead><tbody>
+<div class="card"><div class="card-header">🛒 Últimas ventas confirmadas</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>N.º</th><th>Cliente</th><th>Fecha</th><th>Vendedor</th></tr></thead><tbody>
 {% for venta in ultimas_ventas %}<tr><td>{{ venta.id }}</td><td>{{ venta.cliente.nombre|default:'Público general' }}</td><td>{{ venta.fecha|date:'d/m/Y H:i' }}</td><td>{{ venta.usuario.username }}</td></tr>{% empty %}<tr><td colspan="4">Aún no hay ventas confirmadas.</td></tr>{% endfor %}
 </tbody></table></div></div></div>
 {% endblock %}
