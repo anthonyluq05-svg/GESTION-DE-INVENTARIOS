@@ -1,63 +1,7 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
-<h2>Registro de compras</h2>
-
-{% if perms.compras.add_compra %}
-<a href="{% url 'compras:crear' %}" class="btn btn-primary mb-3">
-    Nueva compra
-</a>
-{% endif %}
-
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-info">
-    {{ message }}
-</div>
-{% endfor %}
-{% endif %}
-
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Proveedor</th>
-            <th>Fecha</th>
-            <th>Usuario</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for compra in compras %}
-        <tr>
-            <td>{{ compra.id }}</td>
-            <td>{{ compra.proveedor.nombre }}</td>
-            <td>{{ compra.fecha|date:"d/m/Y H:i" }}</td>
-            <td>{{ compra.usuario.username }}</td>
-            <td>{{ compra.get_estado_display }}</td>
-            <td>
-                {% if compra.estado == 'BORRADOR' and perms.compras.change_compra %}
-                <form method="post" action="{% url 'compras:confirmar' compra.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success btn-sm"
-                        onclick="return confirm('¿Confirmar compra y actualizar stock?')">
-                        Confirmar
-                    </button>
-                </form>
-                {% else %}
-                <span class="text-muted">Procesada</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6">No hay compras registradas.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+{% extends 'base.html' %}{% block content %}
+<div class="action-header"><div><p class="brand-kicker">🧺 Abastecimiento</p><h1 class="page-title">Compras</h1><p class="section-lead">Ingreso de mercadería a la panadería</p></div><a href="{% url 'compras:crear' %}" class="btn btn-sabor">➕ Nueva compra</a></div>
+{% if es_administrador or user.is_superuser %}<details class="card mb-4 monthly-panel"><summary class="card-header">🗓️ Gestión mensual de borradores <span class="section-lead">(desplegar)</span></summary><div class="card-body"><p class="small section-lead">Solo se borran compras BORRADOR. Las confirmadas mantienen sus movimientos y reportes.</p><form method="post" action="{% url 'compras:eliminar_borradores_mes' %}" class="row align-items-end g-3" data-confirm="¿Eliminar definitivamente los borradores de compra del mes seleccionado?">{% csrf_token %}<div class="col-md-4"><label for="mes-compra" class="form-label">Mes</label><input id="mes-compra" type="month" name="mes" class="form-control" required></div><div class="col-md-4"><label for="confirmar-compra" class="form-label">Escribe ELIMINAR</label><input id="confirmar-compra" name="confirmar" class="form-control" placeholder="ELIMINAR" required></div><div class="col-md-4"><button class="btn btn-danger w-100">🗑️ Eliminar borradores del mes</button></div></form></div></details>{% endif %}
+<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>N.º</th><th>Fecha</th><th>Proveedor</th><th>Responsable</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+{% for compra in compras %}<tr><td><strong>#{{ compra.pk }}</strong></td><td>{{ compra.fecha|date:'d/m/Y H:i' }}</td><td>{{ compra.proveedor|default:'—' }}</td><td>{{ compra.usuario.username|default:'—' }}</td><td>{% if compra.estado == 'CONFIRMADA' %}<span class="badge text-bg-success">Confirmada</span>{% elif compra.estado == 'BORRADOR' %}<span class="badge text-bg-warning">Borrador</span>{% else %}<span class="badge text-bg-secondary">{{ compra.get_estado_display|default:compra.estado }}</span>{% endif %}</td><td>{% if compra.estado == 'BORRADOR' and perms.compras.change_compra %}<form method="post" action="{% url 'compras:confirmar' compra.pk %}" data-confirm="¿Confirmar esta compra y aumentar el stock?">{% csrf_token %}<button class="btn btn-warning btn-sm">✓ Confirmar</button></form>{% if es_administrador or user.is_superuser %}<form method="post" class="d-inline ms-1" action="{% url 'compras:eliminar_borrador' compra.pk %}" data-confirm="¿Eliminar este borrador?">{% csrf_token %}<button class="btn btn-danger btn-sm">🗑️ Eliminar</button></form>{% endif %}{% else %}<span class="text-muted">—</span>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="6">No hay compras registradas.</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}

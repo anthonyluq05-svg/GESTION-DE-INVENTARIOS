@@ -18,12 +18,12 @@
 {% url 'reportes:inventario' as inventario_reporte_url %}{% if inventario_reporte_url %}<a href="{{ inventario_reporte_url }}">📦 Inventario</a>{% endif %}
 </div></details>
 <details class="nav-dropdown"><summary class="nav-link">➕ Agregar <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-menu">
-<a href="{% url 'productos:lista' %}">🥖 Productos</a><a href="{% url 'productos:categorias' %}">🏷️ Categorías</a><a href="{% url 'compras:proveedores' %}">🚚 Proveedores</a><a href="{% url 'productos:usuarios_lista' %}">👤 Usuarios</a>
+<a href="{% url 'productos:lista' %}">🥖 Productos</a><a href="{% url 'productos:categorias' %}">🏷️ Categorías</a><a href="{% url 'compras:proveedores' %}">🚚 Proveedores</a><a href="{% url 'productos:usuarios_lista' %}">👤 Usuarios</a><a href="{% url 'productos:clientes_lista' %}">🤝 Clientes</a>
 </div></details>
 {% endif %}
 <span class="nav-user">👋 {{ user.username }}</span>
 <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-light">Salir</button></form>
 {% endif %}</div></div></div></nav>
-<main class="app-content">{% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main>
+<main class="app-content"><div class="bakery-topline"><span>🥖 EL SABOR HUAMANGUINO</span><span>Panadería &amp; pastelería · Tradición en cada venta</span></div>{% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main>
 <footer class="site-footer">🥖 El Sabor Huamanguino <span>· Tradición que crece contigo</span></footer>
-<script src="{% static 'js/navbar.js' %}"></script>{% block scripts %}{% endblock %}</body></html>
+<script src="{% static 'js/navbar.js' %}"></script><script src="{% static 'js/motion.js' %}" defer></script>{% block scripts %}{% endblock %}</body></html>

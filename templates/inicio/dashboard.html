@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
+<section class="bakery-hero" aria-label="Bienvenida a la panadería">
+  <div class="bakery-hero-text"><p class="brand-kicker">PANADERÍA &amp; PASTELERÍA</p><h2>El sabor de nuestra tradición</h2><p>Ventas, compras e inventario organizados en un solo lugar.</p><span class="hero-mark">🥖 Hecho con dedicación, gestionado con precisión</span></div>
+  <img src="{% static 'img/el-sabor-logo-corregido.png' %}" alt="El Sabor Huamanguino" loading="lazy">
+</section>
+
 <div class="mb-4"><p class="brand-kicker mb-1">Panadería y pastelería</p><h1 class="page-title">Bienvenido a El Sabor Huamanguino</h1><p class="section-lead">Resumen del movimiento comercial de hoy</p></div>
 <div class="row g-3 mb-4">
  <div class="col-md-4"><div class="card h-100"><div class="card-body p-4"><p class="section-lead mb-1">🥐 Productos activos</p><h2 class="page-title">{{ total_productos }}</h2><small>Productos en el catálogo</small></div></div></div>

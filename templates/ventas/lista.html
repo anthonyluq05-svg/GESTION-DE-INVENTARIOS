@@ -1,60 +1,7 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
-<h2>Registro de ventas</h2>
-
-{% if perms.ventas.add_venta %}
-<a href="{% url 'ventas:crear' %}" class="btn btn-primary mb-3">
-    Nueva venta
-</a>
-{% endif %}
-
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-info">{{ message }}</div>
-{% endfor %}
-{% endif %}
-
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Cliente</th>
-            <th>Fecha</th>
-            <th>Vendedor</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for venta in ventas %}
-        <tr>
-            <td>{{ venta.id }}</td>
-            <td>{{ venta.cliente.nombre|default:"Público general" }}</td>
-            <td>{{ venta.fecha|date:"d/m/Y H:i" }}</td>
-            <td>{{ venta.usuario.username }}</td>
-            <td>{{ venta.get_estado_display }}</td>
-            <td>
-                {% if venta.estado == 'BORRADOR' and perms.ventas.change_venta %}
-                <form method="post" action="{% url 'ventas:confirmar' venta.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success btn-sm"
-                        onclick="return confirm('¿Confirmar venta y descontar stock?')">
-                        Confirmar
-                    </button>
-                </form>
-                {% else %}
-                <span class="text-muted">Procesada</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6">No hay ventas registradas.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+{% extends 'base.html' %}{% block content %}
+<div class="action-header"><div><p class="brand-kicker">🛒 Caja comercial</p><h1 class="page-title">Ventas</h1><p class="section-lead">Registro de ventas y clientes de la panadería</p></div><a href="{% url 'ventas:crear' %}" class="btn btn-sabor">➕ Nueva venta</a></div>
+{% if es_administrador or user.is_superuser %}<details class="card mb-4 monthly-panel"><summary class="card-header">🗓️ Gestión mensual de borradores <span class="section-lead">(desplegar)</span></summary><div class="card-body"><p class="small section-lead">Solo se borran ventas en estado BORRADOR. Las confirmadas ya afectaron el inventario y se conservan.</p><form method="post" action="{% url 'ventas:eliminar_borradores_mes' %}" class="row align-items-end g-3" data-confirm="¿Eliminar definitivamente los borradores de venta del mes seleccionado?">{% csrf_token %}<div class="col-md-4"><label for="mes-venta" class="form-label">Mes</label><input type="month" id="mes-venta" name="mes" class="form-control" required></div><div class="col-md-4"><label for="confirmar-venta" class="form-label">Escribe ELIMINAR</label><input id="confirmar-venta" name="confirmar" class="form-control" placeholder="ELIMINAR" required></div><div class="col-md-4"><button class="btn btn-danger w-100">🗑️ Eliminar borradores del mes</button></div></form></div></details>{% endif %}
+<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Vendedor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+{% for venta in ventas %}<tr><td><strong>#{{ venta.pk }}</strong></td><td>{{ venta.fecha|date:'d/m/Y H:i' }}</td><td>{{ venta.cliente|default:'Público general' }}</td><td>{{ venta.usuario.username|default:'—' }}</td><td>{% if venta.estado == 'CONFIRMADA' %}<span class="badge text-bg-success">Confirmada</span>{% elif venta.estado == 'BORRADOR' %}<span class="badge text-bg-warning">Borrador</span>{% else %}<span class="badge text-bg-secondary">{{ venta.get_estado_display|default:venta.estado }}</span>{% endif %}</td><td>{% if venta.estado == 'BORRADOR' and perms.ventas.change_venta %}<form method="post" action="{% url 'ventas:confirmar' venta.pk %}" data-confirm="¿Confirmar esta venta y descontar el stock?">{% csrf_token %}<button class="btn btn-warning btn-sm">✓ Confirmar</button></form>{% if es_administrador or user.is_superuser %}<form method="post" class="d-inline ms-1" action="{% url 'ventas:eliminar_borrador' venta.pk %}" data-confirm="¿Eliminar este borrador?">{% csrf_token %}<button class="btn btn-danger btn-sm">🗑️ Eliminar</button></form>{% endif %}{% else %}<span class="text-muted">—</span>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="6">No hay ventas registradas.</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}
