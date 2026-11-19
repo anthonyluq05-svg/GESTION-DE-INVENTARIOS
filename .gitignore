@@ -221,3 +221,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Django - archivos generados
+staticfiles/
+backups/
+
+# Archivos locales
+*.sqlite3
+*.sqlite3-journal
+
+# Archivos con configuraciones privadas
+.env.*
+!.env.example
