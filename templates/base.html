@@ -1,4 +1,4 @@
-{% load static %}
+{% load static mantenimiento_acceso %}
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{% block title %}El Sabor Huamanguino · SGI{% endblock %}</title>
 <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"><link href="{% static 'css/panaderia.css' %}" rel="stylesheet"><link href="{% static 'css/v5.css' %}" rel="stylesheet"></head>
@@ -20,6 +20,9 @@
 <details class="nav-dropdown"><summary class="nav-link">➕ Agregar <span aria-hidden="true">▾</span></summary><div class="nav-dropdown-menu">
 <a href="{% url 'productos:lista' %}">🥖 Productos</a><a href="{% url 'productos:categorias' %}">🏷️ Categorías</a><a href="{% url 'compras:proveedores' %}">🚚 Proveedores</a><a href="{% url 'productos:usuarios_lista' %}">👤 Usuarios</a><a href="{% url 'productos:clientes_lista' %}">🤝 Clientes</a>
 </div></details>
+{% endif %}
+{% if user|es_cuenta_tecnica %}
+<a class="nav-link nav-link-mantenimiento" href="{% url 'productos:restablecer_comercio' %}" title="Acceso exclusivo a mantenimiento técnico">🔐 Mantenimiento técnico</a>
 {% endif %}
 <span class="nav-user">👋 {{ user.username }}</span>
 <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-light">Salir</button></form>
